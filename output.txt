@@ -1,0 +1,12 @@
+n (n) = 11023
+PHI (phi) = 10800
+Public Key (e) = 7
+Private Key (d) = 1543
+Initial message:
+Going To Dhaka
+
+The encoded message (encrypted by public key)
+96788218403143106651836318882118369206483260450502604
+
+The decoded message (decrypted by private key)
+Going To Dhaka
