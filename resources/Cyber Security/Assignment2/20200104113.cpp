@@ -6,12 +6,12 @@ int private_key;
 int n;
 
 void initialize_keys() {
-    int prime1 = 73;
-    int prime2 = 151;
+    int prime1 = 171;
+    int prime2 = 97;
 
     n = prime1 * prime2;
     int PHI = (prime1 - 1) * (prime2 - 1);
-    int e = 2;
+    int e = 1;
     while (1) {
         if (__gcd(e, PHI) == 1)
             break;
@@ -79,10 +79,10 @@ int main() {
     vector<int> coded = encode_message(message);
     cout << "Initial message:\n"
          << message;
-    cout << "\n\nThe encoded message (encrypted by public key)\n";
+    cout << "\nThe EnCrypted message:\n";
     for (auto &p : coded)
         cout << p;
-    cout << "\n\nThe decoded message (decrypted by private key)\n";
+    cout << "\nThe Decrypted message: \n";
     cout << decode_message(coded) << endl;
     return 0;
 }

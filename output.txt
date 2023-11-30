@@ -1,12 +1,10 @@
-n (n) = 11023
-PHI (phi) = 10800
-Public Key (e) = 7
-Private Key (d) = 1543
-Initial message:
-Going To Dhaka
+char c; int x1, x_2; float y1, y2; x1=5; x_2= 10; y1=2.5+x1*45; y2=100.o5-x_2/3; if(y1<=y2)
+c='y'; else c='n';
 
-The encoded message (encrypted by public key)
-96788218403143106651836318882118369206483260450502604
 
-The decoded message (decrypted by private key)
-Going To Dhaka
+char c ; int x1 , x_2 ; float y1 , y2 ; x1 = 5 ; x_2 =  10 ; y1 = 2.5 + x1 * 45 ; y2 = 100.o5 - x_2 / 3 ; if ( y1 <= y2 )
+c = ' y ' ; else c = ' n ' ;
+
+
+[kw char] [id c] [sep ;] [kw int] [id x1] [sep ,] [id x_2] [sep ;] [kw float] [id y1] [sep ,] [id y2] [sep ;] [id x1] [op =] [num 5] [sep ;] [id x_2] [op =] [num 10] [sep ;] [id y1] [op =] [num 2.5] [op +] [id x1] [op *] [num 45] [sep ;] [id y2] [op =] [unkn 100.o5] [op -] [id x_2] [op /] [num 3] [sep ;] [kw if] [par (] [id y1] [op <=] [id y2] [unkn )
+c] [op =] [sep '] [id y] [sep '] [sep ;] [kw else] [id c] [op =] [sep '] [id n] [sep '] [sep ;] 
