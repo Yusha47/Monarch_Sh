@@ -1,0 +1,4 @@
+1- shb text er summary  generate kora
+2- ner use kre key word ber kora generated summary gula theke
+3. Key word k use kre question  generate kora summary theke
+4.answer  generate kora from both summary and its context
