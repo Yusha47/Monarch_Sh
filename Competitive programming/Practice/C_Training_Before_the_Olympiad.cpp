@@ -1,132 +1,66 @@
-#include<bits/stdc++.h>
-using namespace std;
-typedef long long ll;
-typedef unsigned long long ull;
+# Install PySpark and Spark NLP
+! pip install -q pyspark==3.3.0 spark-nlp==4.2.8
 
-const int DEBUGGER = 1;
-
+# Install Spark NLP Display lib
+! pip install --upgrade -q spark-nlp-displ
 
 
-#define MAX 10000
-#define mp make_pair
-#define pb push_back
+import json
+import pandas as pd
+import numpy as np
 
+import sparknlp
+import pyspark.sql.functions as F
 
-#define II ({ ll TEMP; cin>>TEMP; TEMP; })
-#define SI ({ string TEMP; cin>>TEMP; TEMP; })
-#define AI(a) ({ int n=sizeof(a)/sizeof(a[0]); rep(I,0,n)a[I]=II; })
-#define AO(a) ({ int n=sizeof(a)/sizeof(a[0]); rep(I,0,n){cout<<(I?" ":"")<<a[I];} if(DEBUGGER)cout<<endl;else cout<<'\n'; })
-#define VI(v) ({ rep(I,0,v.size())v[I]=II; })
-#define VO(v) ({ rep(I,0,v.size()){cout<<(I?" ":"")<<v[I];} if(DEBUGGER)cout<<endl;else cout<<'\n'; })
-#define dbg(a) ({ if(DEBUGGER)cout<<#a<<" = "<<a<<endl; })
-#define outa(a) ({ if(DEBUGGER)dbg(a); else cout<<a<<'\n'; })
+from pyspark.ml import Pipeline
+from pyspark.sql import SparkSession
+from sparknlp.annotator import *
+from sparknlp.base import *
+from sparknlp.pretrained import PretrainedPipeline
+from pyspark.sql.types import StringType, IntegerType
 
-#define rep(i,a,n) for(int i=a;i<n;i++)
-#define repr(i,a,n) for(int i=n-1;i>=a;i--)
-#define repSe(i,st,end) for(int i=st;i<end;i++)
-#define repS0(i,st,end) for(int i=st;i>0;i--)
-#define SET(a) memset(a,-1,sizeof(a))
-#define CLR(a) memset(a,0,sizeof(a))
-#define endl '\n'
-#define MOD 1000000007
-#define MX 105
-#define FAST                          \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(0)
-const int INF = 1e9 + 7;
-#define all(v) v.begin(), v.end()
+spark = sparknlp.start()
 
+print("Spark NLP version", sparknlp.version())
+print("Apache Spark version:", spark.version)
 
-vector<pair<int, int>> directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0},{-1,-1},{-1,1},{1,1},{1,-1}};
+spark
 
-bool check(ll x,ll y,ll h,ll w)
-{
-    if(x<1 || x>h || y<1 || y>w)
-    {
-        return false;
-    }
-    else return true;
-}
+spark = SparkSession.builder \
+    .appName("ner_task2") \
+    .getOrCreate()
 
-ll sum(ll n1) {
-    return (n1*(n1+1))/2;
-    
-}
+# Create the DocumentAssembler
+document_assembler = DocumentAssembler() \
+    .setInputCol("text") \
+    .setOutputCol("document")
 
-void fillPrefixSum(ll arr[], int n, ll prefixSum[]) 
-{ 
-    prefixSum[0] = arr[0]; 
-    // Adding present element with previous element 
-    for (int i = 1; i < n; i++) 
-    {
-         prefixSum[i] = ((prefixSum[i - 1] + arr[i])/2)*2; 
-        
-    }
-       
-} 
-void solve()
-{
-    int n;
-    cin>>n;
-    ll arr[n];
-    for(int i=0;i<n;i++)
-    cin>>arr[i];
-     
-  
-    ll prefixSum[n]; 
-    
-      // Function call 
-    fillPrefixSum(arr, n, prefixSum); 
-    for (int i = 0; i < n; i++) 
-    {
+# Create the Tokenizer
+tokenizer = Tokenizer() \
+    .setInputCols(["document"]) \
+    .setOutputCol("token")
 
-      
-        cout << prefixSum[i] << " ";
-    }
-        
+# Download and configure the WordEmbeddingsModel
+embeddings = WordEmbeddingsModel.pretrained("bengali_cc_300d", "bn") \
+    .setInputCols(["document", "token"]) \
+    .setOutputCol("embeddings")
 
-    cout<<endl;
+# Download and configure the NerDLModel for named entity recognition
+ner = NerDLModel.pretrained("bengaliner_cc_300d", "bn") \
+    .setInputCols(["document", "token", "embeddings"]) \
+    .setOutputCol("ner")
 
-}
-int main()
-{
-    //FAST;
+# Create a NerConverter for converting the NER results to human-readable format
+ner_converter = NerConverter() \
+    .setInputCols(["document", "token", "ner"]) \
+    .setOutputCol("ner_chunk")
 
-   #ifndef ONLINE_JUDGE
+    pipeline = Pipeline(stages=[document_assembler, tokenizer, embeddings, ner, ner_converter])
 
-   // For getting input from input.txt file
-   //freopen("F:\GIT\input.txt", "r", stdin);
+# Your example data
+example = spark.createDataFrame([['১৯৪৮ সালে ইয়াজউদ্দিন আহম্মেদ মুন্সিগঞ্জ উচ্চ বিদ্যালয় থেকে মেট্রিক পাশ করেন এবং ১৯৫০ সালে মুন্সিগঞ্জ হরগঙ্গা কলেজ থেকে ইন্টারমেডিয়েট পাশ করেন']], ["text"])
 
-    // Printing the Output to output.txt file
-  // freopen("F:\GIT\output.txt", "w", stdout);
-//
-    #endif
+# Fit the pipeline on the example data
+result = pipeline.fit(example).transform(example)
 
-    ll t=1;
-    cin>>t;
-
-
-    while(t--)
-    {
-
-
-
-        solve();
-
-
-    }
-    return 0;
-
-}
-
-
-
-
-// cerr << "\n\n\n"
-//      << (float)clock() / CLOCKS_PER_SEC * 1000 << " ms" << endl;
-
-
-
-
-
-
+result.show(truncate=False)
